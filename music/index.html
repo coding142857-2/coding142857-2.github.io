@@ -6,6 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>輕音樂，水晶音樂</title>
     <style>
+        * {
+            text-align: center;
+            font: 40px sans-serif;
+        }
+        
         body {
             padding: 0;
             margin: 10px;
@@ -19,6 +24,8 @@
 
 <body>
     <button id="B" onclick="T();" style="display: block;"></button>
+    <button id="R1" onclick="R(0);" style="display: block;">水晶音樂</button>
+    <button id="R2" onclick="R(1);" style="display: block;">療癒冥想</button>
     <audio src="S1.mp3" id="S"></audio>
     <img src="play.png" class="I" id="PI">
     <img src="stop.png" class="I" id="SI">
@@ -29,9 +36,8 @@
     const S = document.getElementById('S');
     const PI = document.getElementById('PI')
     const SI = document.getElementById('SI')
-    S.loop = true;
     var P = false;
-    
+
     function T() {
         P = !P;
         B.innerHTML = '';
@@ -44,21 +50,27 @@
         };
     };
 
+    function R(N) {
+        S.src = `S${N+1}.mp3`
+        P = false;
+        T();
+    };
+
     function resize() {
-        let MS = Math.min(window.innerWidth, window.innerHeight);
-        B.style.width = `${MS - 20}px`;
-        B.style.height = `${MS - 20}px`;
-        SI.style.width = `${MS - 40}px`;
-        SI.style.height = `${MS - 40}px`;
-        PI.style.width = `${MS - 40}px`;
-        PI.style.height = `${MS - 40}px`;
+        let BS = 200;
+        B.style.width = `${BS}px`;
+        B.style.height = `${BS}px`;
+        SI.style.width = `${BS - 20}px`;
+        SI.style.height = `${BS - 20}px`;
+        PI.style.width = `${BS - 20}px`;
+        PI.style.height = `${BS - 20}px`;
     };
 
     T();
     T();
     resize();
 
-    document.addEventListener('resize', resize)
+    document.addEventListener('resize', resize);
 </script>
 
 </html>
