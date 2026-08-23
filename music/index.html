@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>輕音樂，水晶音樂</title>
     <style>
+        html {
+            --width: 200px;
+        }
+        
         * {
             text-align: center;
             font: 40px sans-serif;
@@ -19,13 +23,19 @@
         .I {
             image-rendering: pixelated;
         }
+        
+        .B {
+            display: inline-block;
+            width: var(--width);
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 
 <body>
-    <button id="B" onclick="T();" style="display: block;"></button>
-    <button id="R1" onclick="R(0);" style="display: block;">水晶音樂</button>
-    <button id="R2" onclick="R(1);" style="display: block;">療癒冥想</button>
+    <button id="B" onclick="T();" class="B"></button><br>
+    <button id="R1" onclick="R(0);" class="B">水晶音樂</button><br>
+    <button id="R2" onclick="R(1);" class="B">療癒冥想</button><br>
     <audio src="S1.mp3" id="S"></audio>
     <img src="play.png" class="I" id="PI">
     <img src="stop.png" class="I" id="SI">
