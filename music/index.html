@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>輕音樂，水晶音樂</title>
+    <style>
+        body {
+            padding: 0;
+            margin: 10px;
+        }
+        
+        .I {
+            image-rendering: pixelated;
+        }
+    </style>
+</head>
+
+<body>
+    <button id="B" onclick="T();" style="display: block;"></button>
+    <audio src="./S1" id="S"></audio>
+    <img src="play.png" class="I" id="PI">
+    <img src="stop.png" class="I" id="SI">
+</body>
+<script>
+    "use strict";
+    const B = document.getElementById('B');
+    const S = document.getElementById('S');
+    const PI = document.getElementById('PI')
+    const SI = document.getElementById('SI')
+    var P = false;
+
+    function T() {
+        P = !P;
+        B.innerHTML = '';
+        if (P) {
+            S.play();
+            B.appendChild(SI);
+        } else {
+            S.pause();
+            B.appendChild(PI);
+        };
+    };
+
+    function resize() {
+        let MS = Math.min(window.innerWidth, window.innerHeight);
+        B.style.width = `${MS - 20}px`;
+        B.style.height = `${MS - 20}px`;
+        SI.style.width = `${MS - 40}px`;
+        SI.style.height = `${MS - 40}px`;
+        PI.style.width = `${MS - 40}px`;
+        PI.style.height = `${MS - 40}px`;
+    };
+
+    T();
+    T();
+    resize();
+
+    document.addEventListener('resize', resize)
+</script>
+
+</html>
