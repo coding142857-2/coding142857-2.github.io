@@ -37,6 +37,7 @@
     <button id="R1" onclick="R(0);" class="B">水晶音樂</button><br>
     <button id="R2" onclick="R(1);" class="B">療癒冥想</button><br>
     <button id="R3" onclick="R(2);" class="B">涼涼</button><br>
+    <a href="S4.html"><button id="R4"class="B">無字的情批</button></a><br>
     <audio src="S1.mp3" id="S"></audio>
     <img src="play.png" class="I" id="PI">
     <img src="stop.png" class="I" id="SI">
@@ -82,6 +83,10 @@
     resize();
 
     document.addEventListener('resize', resize);
+
+    S.addEventListener('ended', function() {
+        S.play();
+    })
 </script>
 
 </html>
