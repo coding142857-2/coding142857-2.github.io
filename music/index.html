@@ -36,6 +36,7 @@
     <button id="B" onclick="T();" class="B"></button><br>
     <button id="R1" onclick="R(0);" class="B">水晶音樂</button><br>
     <button id="R2" onclick="R(1);" class="B">療癒冥想</button><br>
+    <button id="R5" onclick="R(4);" class="B">光冥想</button><br>
     <button id="R3" onclick="R(2);" class="B">涼涼</button><br>
     <a href="S4.html"><button id="R4"class="B">無字的情批</button></a><br>
     <audio src="S1.mp3" id="S"></audio>
@@ -63,6 +64,7 @@
     };
 
     function R(N) {
+        console.log(`R(${N})`);
         S.src = `S${N+1}.mp3`
         P = false;
         T();
