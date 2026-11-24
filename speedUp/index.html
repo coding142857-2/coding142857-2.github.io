@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>speedUp</title>
+    <style>
+        * {
+            background: #000;
+            color: #fff;
+        }
+        
+        #start {
+            display: block;
+            position: fixed;
+            font-size: 50px;
+            text-align: center;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: 700;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        #info {
+            display: block;
+            position: fixed;
+            font-size: 50px;
+            text-align: center;
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: 700;
+            width: 100%;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            text-shadow: 0 0 10px;
+        }
+        
+        @keyframes beatKick {
+            0% {
+                transform: translate(-50%, -50%) scale(1.22);
+                filter: brightness(1.4);
+            }
+            40% {
+                transform: translate(-50%, -50%) scale(0.97);
+                filter: brightness(1.1);
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                filter: brightness(1);
+            }
+        }
+        
+        .kick {
+            animation: beatKick var(--beat-dur, 461.54ms) cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        #index {
+            display: block;
+            position: fixed;
+            font-size: 20px;
+            text-align: center;
+            font-family: Arial, Helvetica, sans-serif;
+            left: 0;
+            top: 0;
+        }
+        
+        #speed {
+            display: block;
+            position: fixed;
+            font-size: 20px;
+            text-align: center;
+            font-family: Arial, Helvetica, sans-serif;
+            right: 0;
+            top: 0;
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+    <span id="index"></span>
+    <button id="start">start</button>
+    <span id="info"></span>
+    <input type="number" min="10" max="500" value="461.538461538" id="speed" step="5">
+    <audio src="./track0.mp3" id="audio" style="display:none;"></audio>
+</body>
+<script>
+    const dictionary = [
+        "ability|能力",
+        "accomplish|達成",
+        "accomplishment|成就",
+        "account|帳戶；帳號",
+        "ad|廣告",
+        "affect|影響",
+        "agriculture|農業",
+        "alert|警示；警覺的",
+        "ancient|古代的；古老的",
+        "assign|指派",
+        "assignment|（分派的）作業；工作",
+        "attract|招引；吸引",
+        "attraction|有吸引力的事物或地點",
+        "attractive|吸引人的",
+        "automatically|自動地",
+        "awareness|意識；認識；了解",
+        "balanced|均衡的",
+        "base|底座",
+        "behave|表現",
+        "behavior|行為",
+        "benefit|使...受益；對...有幫助",
+        "bury|埋葬；掩埋",
+        "capture|逼真地表現；刻畫；描繪",
+        "celebrate|慶祝",
+        "celebration|慶祝；慶祝活動",
+        "challenge|挑戰；考驗",
+        "charge|（向...）收費；要價",
+        "client|客戶；顧客",
+        "column|柱",
+        "compare|把...比作",
+        "complete|已完成的；已結束的；完成",
+        "consume|吃喝；消耗",
+        "consumer|消費者",
+        "convenience|便利",
+        "create|創造；產生出",
+        "creation|創造；創建",
+        "creative|有創意的",
+        "creativity|創意",
+        "crispy|酥脆的",
+        "crowd|人群",
+        "crowded|擠滿的；擁擠的",
+        "daily|每日的",
+        "debt|債務；欠款",
+        "deposit|存款",
+        "dessert|甜點",
+        "detail|細節；詳情",
+        "detailed|細緻的",
+        "detect|偵測到；察覺",
+        "disease|疾病",
+        "drift|漂流",
+        "eager|渴望的",
+        "eagerly|渴望地",
+        "electronic|電子（化）的",
+        "energetic|充滿活力的",
+        "environment|自然環境；環境",
+        "environmental|自然環境的",
+        "envy|羨慕",
+        "exchange|交換；互換",
+        "exhibition|展覽",
+        "expose|使接觸；使體驗；使暴露於；使遭受（危險或不快）",
+        "exposure|暴露",
+        "fairy tale|童話故事",
+        "faith|（對神的）信仰",
+        "feature|功能；特色",
+        "field|運動場；比賽場",
+        "firm|堅硬的；結實的",
+        "firmly|牢固地；堅定地",
+        "flame|火焰；火舌",
+        "focus|專注力",
+        "following|接著的；接下來的",
+        "found|創立；創辦；創建",
+        "freedom|自由",
+        "gap|間隙",
+        "global|全球的；全世界的",
+        "globe|地球；世界",
+        "grain|穀物；穀類",
+        "harm|傷害",
+        "harmful|有害的",
+        "historic|具有歷史意義的；歷史上著名（或重要）的",
+        "hut|（簡陋的）小屋",
+        "ideal|理想的",
+        "identity|認同；身分；特性",
+        "independence|獨立",
+        "independent|獨立的",
+        "infect|感染",
+        "infected|遭感染的",
+        "infection|感染",
+        "inspire|啟發",
+        "instead|反而；取而代之的是",
+        "item|一項物品",
+        "keen|敏銳的；渴望的；熱衷的",
+        "ladder|梯子",
+        "landmark|地標",
+        "legally|合法地",
+        "liquid|液態的",
+        "lively|熱絡的",
+        "locate|找到",
+        "location|地點",
+        "loss|減少；下跌",
+        "manage|設法成功做到；能夠應付；明智地使用、管理（金錢、時間等）",
+        "management|管理",
+        "marble|大理石",
+        "meaningful|有意義的；重要的",
+        "medical|醫學的；醫療的",
+        "monument|紀念碑",
+        "neighborhood|地區；街區",
+        "nickname|給...取外號／綽號",
+        "normal|正常的；平常的",
+        "observe|慶祝；度過；紀念（節日、事件等）（此為正式用字）",
+        "obvious|明顯的",
+        "obviously|顯然",
+        "organized|有條理的；有組織的",
+        "originally|起初；原來",
+        "pea|豌豆",
+        "peaceful|平靜的",
+        "peel|剝／削...的皮",
+        "perform|做某事；做某種行為；表演",
+        "performance|表演",
+        "plastic|塑膠（製）的；塑膠",
+        "playful|趣味的；娛樂性質的",
+        "poison|毒害；毒藥；毒素",
+        "poisonous|有毒的",
+        "pole|竿；杆",
+        "port|港；港口",
+        "portrait|（面部的）肖像，相片，畫像",
+        "pose|擺姿勢",
+        "possibility|可能性",
+        "pour|倒",
+        "predict|預測",
+        "previously|先前",
+        "produce|製造；生產",
+        "product|產品",
+        "production|製造",
+        "proper|適當的",
+        "properly|適當地",
+        "recycle|回收",
+        "recycling|回收",
+        "reliable|可靠的",
+        "remind|提醒",
+        "remove|去除；移除",
+        "represent|作為⋯⋯的象徵；代表",
+        "representation|表現（形式）；塑像",
+        "respond|反應；回應",
+        "reward|獎勵；報酬；獎賞；提供報酬",
+        "routine|一套固定的動作",
+        "satisfying|令人心滿意足的；令人滿意的",
+        "savings|積蓄；存款",
+        "schedule|時間表；計畫表",
+        "seal|封；密封",
+        "secretly|祕密地",
+        "sensitive|敏感的",
+        "situation|狀況；情勢",
+        "slave|奴隸",
+        "slavery|蓄奴制；奴隸身分",
+        "smooth|滑順無顆粒的",
+        "somehow|不知怎麼地",
+        "specific|特定的",
+        "stadium|運動場；體育場",
+        "statue|雕像",
+        "steady|不變的；穩定的",
+        "substance|物質",
+        "suffer|受苦",
+        "supply|供給量",
+        "surround|圍繞",
+        "surroundings|環境",
+        "symbol|象徵",
+        "symbolic|作為象徵的；象徵性的",
+        "symbolize|象徵；代表",
+        "tap|（常指連續）輕敲，輕拍，輕觸",
+        "temporary|短暫的；暫時的",
+        "toast|烤；烘",
+        "tourism|旅遊業；觀光業",
+        "tourist|遊客",
+        "trade|行業",
+        "treatment|對待；待遇",
+        "trial|試用",
+        "trumpet|小號；小喇叭",
+        "unfair|不公正的；不公平的",
+        "unique|獨特的",
+        "variety|種種；各式各樣",
+        "vary|有所不同",
+        "vitamin|維他命；維生素",
+        "wealthy|富有的",
+        "wrap|用...包／裹／圍",
+        "yearly|整年的；每年的；一年一次的"
+    ];
+    var count = -1;
+    var tick = 0;
+    var rate = 461.538461538;
+    var run;
+    var eng;
+    var colors = ['#f77', '#f97', '#ff7', '#7f7', '#7ff', '#97f', '#f7f'];
+    var info = document.getElementById('info');
+    var index = document.getElementById('index');
+    var audio = document.getElementById('audio');
+    var track = 0;
+    var btn = document.getElementById('start');
+    document.getElementById('speed').addEventListener('input', e => {
+        rate = e.target.value - 0;
+        info.style.setProperty('--beat-dur', rate + 'ms');
+    })
+
+    function task() {
+        info.innerHTML = '';
+        info.innerHTML += '<span style="color: ' + colors[count % colors.length] + ';">' + eng.slice(0, tick + 1) + '</span>';
+        info.innerHTML += eng.slice(tick + 1);
+        info.innerHTML += '<br>';
+        info.innerHTML += '<span style="color: ' + colors[count % colors.length] + ';">' + dictionary[count].split('|')[1] + '</span>';
+        index.innerText = count + ' - ' + tick;
+        tick++;
+        if (tick < eng.length) setTimeout(task, rate / eng.length - 1);
+    }
+
+    function step() {
+        info.classList.remove('kick');
+        void info.offsetWidth;
+        info.classList.add('kick');
+        count++;
+        if (count === dictionary.length) count = 0;
+        eng = dictionary[count].split('|')[0];
+        tick = 0;
+        task();
+    }
+
+    var now;
+
+    function loop() {
+        if (performance.now() - now > rate) {
+            now += rate;
+            step();
+        }
+        requestAnimationFrame(loop);
+    }
+
+    btn.addEventListener('click', e => {
+        now = performance.now() + 700;
+        setTimeout(loop, 700);
+        audio.play();
+        btn.remove();
+    });
+
+
+
+    audio.addEventListener('ended', e => {
+        audio.src = './track' + (track = ++track % 9) + '.mp3';
+        audio.play();
+    })
+</script>
+
+</html>
