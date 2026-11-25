@@ -6,7 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>speedUp</title>
     <style>
-        * {
+        html,
+        body,
+        button {
             background: #000;
             color: #fff;
         }
@@ -14,13 +16,14 @@
         #start {
             display: block;
             position: fixed;
-            font-size: 50px;
+            font-size: 100px;
             text-align: center;
             font-family: Arial, Helvetica, sans-serif;
-            font-weight: 700;
+            font-weight: 900;
             left: 50%;
             top: 50%;
-            transform: translate(-50%, -50%);
+            translate: -50% -50%;
+            border: none;
         }
         
         #info {
@@ -33,27 +36,8 @@
             width: 100%;
             left: 50%;
             top: 50%;
-            transform: translate(-50%, -50%);
+            translate: -50% -50%;
             text-shadow: 0 0 10px;
-        }
-        
-        @keyframes beatKick {
-            0% {
-                transform: translate(-50%, -50%) scale(1.22);
-                filter: brightness(1.4);
-            }
-            40% {
-                transform: translate(-50%, -50%) scale(0.97);
-                filter: brightness(1.1);
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(1);
-                filter: brightness(1);
-            }
-        }
-        
-        .kick {
-            animation: beatKick var(--beat-dur, 461.54ms) cubic-bezier(0.16, 1, 0.3, 1);
         }
         
         #index {
@@ -81,255 +65,181 @@
 
 <body>
     <span id="index"></span>
-    <button id="start">start</button>
     <span id="info"></span>
-    <input type="number" min="10" max="500" value="461.538461538" id="speed" step="5">
+    <button id="start">start</button>
     <audio src="./track0.mp3" id="audio" style="display:none;"></audio>
 </body>
 <script>
-    const dictionary = [
-        "ability|能力",
-        "accomplish|達成",
-        "accomplishment|成就",
-        "account|帳戶；帳號",
-        "ad|廣告",
-        "affect|影響",
-        "agriculture|農業",
-        "alert|警示；警覺的",
-        "ancient|古代的；古老的",
-        "assign|指派",
-        "assignment|（分派的）作業；工作",
-        "attract|招引；吸引",
-        "attraction|有吸引力的事物或地點",
-        "attractive|吸引人的",
-        "automatically|自動地",
-        "awareness|意識；認識；了解",
-        "balanced|均衡的",
-        "base|底座",
-        "behave|表現",
-        "behavior|行為",
-        "benefit|使...受益；對...有幫助",
-        "bury|埋葬；掩埋",
-        "capture|逼真地表現；刻畫；描繪",
-        "celebrate|慶祝",
-        "celebration|慶祝；慶祝活動",
-        "challenge|挑戰；考驗",
-        "charge|（向...）收費；要價",
-        "client|客戶；顧客",
-        "column|柱",
-        "compare|把...比作",
-        "complete|已完成的；已結束的；完成",
-        "consume|吃喝；消耗",
-        "consumer|消費者",
-        "convenience|便利",
-        "create|創造；產生出",
-        "creation|創造；創建",
-        "creative|有創意的",
-        "creativity|創意",
-        "crispy|酥脆的",
-        "crowd|人群",
-        "crowded|擠滿的；擁擠的",
-        "daily|每日的",
-        "debt|債務；欠款",
-        "deposit|存款",
-        "dessert|甜點",
-        "detail|細節；詳情",
-        "detailed|細緻的",
-        "detect|偵測到；察覺",
-        "disease|疾病",
-        "drift|漂流",
-        "eager|渴望的",
-        "eagerly|渴望地",
-        "electronic|電子（化）的",
-        "energetic|充滿活力的",
-        "environment|自然環境；環境",
-        "environmental|自然環境的",
-        "envy|羨慕",
-        "exchange|交換；互換",
-        "exhibition|展覽",
-        "expose|使接觸；使體驗；使暴露於；使遭受（危險或不快）",
-        "exposure|暴露",
-        "fairy tale|童話故事",
-        "faith|（對神的）信仰",
-        "feature|功能；特色",
-        "field|運動場；比賽場",
-        "firm|堅硬的；結實的",
-        "firmly|牢固地；堅定地",
-        "flame|火焰；火舌",
-        "focus|專注力",
-        "following|接著的；接下來的",
-        "found|創立；創辦；創建",
-        "freedom|自由",
-        "gap|間隙",
-        "global|全球的；全世界的",
-        "globe|地球；世界",
-        "grain|穀物；穀類",
-        "harm|傷害",
-        "harmful|有害的",
-        "historic|具有歷史意義的；歷史上著名（或重要）的",
-        "hut|（簡陋的）小屋",
-        "ideal|理想的",
-        "identity|認同；身分；特性",
-        "independence|獨立",
-        "independent|獨立的",
-        "infect|感染",
-        "infected|遭感染的",
-        "infection|感染",
-        "inspire|啟發",
-        "instead|反而；取而代之的是",
-        "item|一項物品",
-        "keen|敏銳的；渴望的；熱衷的",
-        "ladder|梯子",
-        "landmark|地標",
-        "legally|合法地",
-        "liquid|液態的",
-        "lively|熱絡的",
-        "locate|找到",
-        "location|地點",
-        "loss|減少；下跌",
-        "manage|設法成功做到；能夠應付；明智地使用、管理（金錢、時間等）",
-        "management|管理",
-        "marble|大理石",
-        "meaningful|有意義的；重要的",
-        "medical|醫學的；醫療的",
-        "monument|紀念碑",
-        "neighborhood|地區；街區",
-        "nickname|給...取外號／綽號",
-        "normal|正常的；平常的",
-        "observe|慶祝；度過；紀念（節日、事件等）（此為正式用字）",
-        "obvious|明顯的",
-        "obviously|顯然",
-        "organized|有條理的；有組織的",
-        "originally|起初；原來",
-        "pea|豌豆",
-        "peaceful|平靜的",
-        "peel|剝／削...的皮",
-        "perform|做某事；做某種行為；表演",
-        "performance|表演",
-        "plastic|塑膠（製）的；塑膠",
-        "playful|趣味的；娛樂性質的",
-        "poison|毒害；毒藥；毒素",
-        "poisonous|有毒的",
-        "pole|竿；杆",
-        "port|港；港口",
-        "portrait|（面部的）肖像，相片，畫像",
-        "pose|擺姿勢",
-        "possibility|可能性",
-        "pour|倒",
-        "predict|預測",
-        "previously|先前",
-        "produce|製造；生產",
-        "product|產品",
-        "production|製造",
-        "proper|適當的",
-        "properly|適當地",
-        "recycle|回收",
-        "recycling|回收",
-        "reliable|可靠的",
-        "remind|提醒",
-        "remove|去除；移除",
-        "represent|作為⋯⋯的象徵；代表",
-        "representation|表現（形式）；塑像",
-        "respond|反應；回應",
-        "reward|獎勵；報酬；獎賞；提供報酬",
-        "routine|一套固定的動作",
-        "satisfying|令人心滿意足的；令人滿意的",
-        "savings|積蓄；存款",
-        "schedule|時間表；計畫表",
-        "seal|封；密封",
-        "secretly|祕密地",
-        "sensitive|敏感的",
-        "situation|狀況；情勢",
-        "slave|奴隸",
-        "slavery|蓄奴制；奴隸身分",
-        "smooth|滑順無顆粒的",
-        "somehow|不知怎麼地",
-        "specific|特定的",
-        "stadium|運動場；體育場",
-        "statue|雕像",
-        "steady|不變的；穩定的",
-        "substance|物質",
-        "suffer|受苦",
-        "supply|供給量",
-        "surround|圍繞",
-        "surroundings|環境",
-        "symbol|象徵",
-        "symbolic|作為象徵的；象徵性的",
-        "symbolize|象徵；代表",
-        "tap|（常指連續）輕敲，輕拍，輕觸",
-        "temporary|短暫的；暫時的",
-        "toast|烤；烘",
-        "tourism|旅遊業；觀光業",
-        "tourist|遊客",
-        "trade|行業",
-        "treatment|對待；待遇",
-        "trial|試用",
-        "trumpet|小號；小喇叭",
-        "unfair|不公正的；不公平的",
-        "unique|獨特的",
-        "variety|種種；各式各樣",
-        "vary|有所不同",
-        "vitamin|維他命；維生素",
-        "wealthy|富有的",
-        "wrap|用...包／裹／圍",
-        "yearly|整年的；每年的；一年一次的"
+    const quastions = [
+        ["Eagles have the ", "a_____y", " to fly without landing for over three hours.", ["ability"]],
+        ["Albert respects those who have a ", "a__________d", " something great in their lives.", ["accomplished"]],
+        ["", "A_________e", " is very important in this region. In fact, more than 75% of people here work as farmers.", ["Agriculture"]],
+        ["Everybody was asked to leave the mall due to a bomb ", "a___t", " in one of the stores.", ["alert"]],
+        ["Cindy was walking down the street when ", "a__ o_ a s____n", ", rain began to pour down from the sky.", ["all of a sudden"]],
+        ["The Great Wall was built thousands of years ago to stop ", "a_____t", " China's enemies from invading.", ["ancient"]],
+        ["The noodle shop has a long line of people outside ", "a_ a____s", " because they make the best noodles in town.", ["as always"]],
+        ["Craig was ", "a______d", " the task of giving the new students a tour of the school.", ["assigned"]],
+        ["Beaches and water sports are the main ", "a_________s", " in Kenting.", ["attractions"]],
+        ["The goal of this project is to increase ", "a_______s", " of daily exercise and encourage kids to play outside more often.", ["awareness"]],
+        ["Paul always keeps ", "a b______d", " schedule with time for studying, exercising, and other activities.", ["a balanced"]],
+        ["Animal ", "b______r", " can tell us a lot about what a creature is thinking about or wants.", ["behavior"]],
+        ["The company's success may ", "b_____t", " all of its workers because they could get higher pay.", ["benefit"]],
+        ["After the statue went missing from the square, the police ", "c______d o__", " an investigation.", ["carried out"]],
+        ["Yvonne invited her friends out for dinner in ", "c_________n", " of finishing all of their exams.", ["celebration"]],
+        ["During the performance, ", "c____e t_", " two thousand people sang along with the band and created an unforgettable memory together.", ["close to"]],
+        ["The building needs strong ", "c_____s", " to stand safely.", ["columns"]],
+        ["Paulina went through all of her receipts but didn't ", "c___e a____s", " any winning numbers.", ["come across"]],
+        ["Jane said she's not ready to join us yet, but she will ", "c___e a___g", " later.", ["come along"]],
+        ["The race is not ", "c______e", " until every runner from every team crosses the finish line.", ["complete"]],
+        ["Driving after you ", "c_____e", " too much beer or wine can lead to a car crash.", ["consume"]],
+        ["Many shops post their business hours on their Facebook pages for ", "t__ c_________e", " of the public.", ["the convenience"]],
+        ["The inventor of the telephone, Antonio Meucci, ", "c_____d", " a new way for humans to communicate.", ["created"]],
+        ["The fried chicken has ", "c____y", " skin. It makes a light sound when you bite into it.", ["crispy"]],
+        ["The Smith family is moving into a new house tomorrow, so their living room is ", "c_____d", " with boxes.", ["crowded"]],
+        ["Julius bought ", "a d______d", " wooden box that took the artist months to make.", ["a detailed"]],
+        ["For most people, it is not easy to ", "d____t", " a small change in temperature.", ["detect"]],
+        ["Washing your hands often is a good way to stop the spread of ", "d_____e", ".", ["disease"]],
+        ["Lynn's grandmother is suffering from a serious heart ", "d_____e", ", so she is staying in a hospital.", ["disease"]],
+        ["After the captain fell asleep, the ship passed the harbor and then ", "d_____d", " toward the middle of the sea.", ["drifted"]],
+        ["The restaurant was not very popular ", "d_ t_", " the smell of the seafood market nearby.", ["due to"]],
+        ["Rick is ", "e_____y", " waiting for his boss to post the summer work schedule because he wants to plan his vacation.", ["eagerly"]],
+        ["Coby showed his ", "e_______c", " ticket on his phone to enter the concert.", ["electronic"]],
+        ["The family couldn't agree on a restaurant to go to, so they ", "e____d u_", " staying home and eating pizza.", ["ended up"]],
+        ["Kathy got a good night's sleep yesterday, so she feels ", "e_______c", " and happy today.", ["energetic"]],
+        ["It is every person's responsibility to save the earth's natural ", "e_________t", " for our sons and daughters.", ["environment"]],
+        ["Christopher really ", "e____s", " his best friend, Patty, because she has been to so many countries.", ["envies"]],
+        ["Kyle knows all the words to this song ", "e___ t_____h", " he has only heard it a few times before.", ["even though"]],
+        ["After the students read the book, they ", "e_______d", " ideas with each other to understand the story better.", ["exchanged"]],
+        ["The science ", "e________n", " at the museum included fun displays and activities for young students.", ["exhibition"]],
+        ["By reading these articles, students will be ", "e_____d", " to different opinions about the topic.", ["exposed"]],
+        ["After the terrible war, Tommy didn't think it was possible that God existed, so he lost his ", "f___h", ".", ["faith"]],
+        ["The soccer player took the ball and ran the entire length of the ", "f___d", " to score a goal.", ["field"]],
+        ["Jack ", "f____y", " closed the lid of the jar so that it wouldn't open accidentally.", ["firmly"]],
+        ["The lion hid behind a tree ", "f__ a w____e", ", waiting for a deer to walk by.", ["for a while"]],
+        ["After Simon turned eighteen, his parents gave him the ", "f_____m", " to watch any movies he wanted to.", ["freedom"]],
+        ["Many of David Bowie's fans around the ", "g____e", " posted images or words on Facebook and Instagram in memory of him after he died on January 10, 2016.", ["globe"]],
+        ["Whole ", "g____s", " like brown rice are healthier than white rice or white bread.", ["grains"]],
+        ["The cleaners were careful not to do any ", "h__m", " to the objects in the museum as they cleaned around them.", ["harm"]],
+        ["During Bryan's trip to Italy, he visited ", "a h______c", " castle that was built almost 500 years ago.", ["a historic"]],
+        ["During the harvest, farmers slept in tiny ", "h__s", " near the fields, far from the comfort of their homes.", ["huts"]],
+        ["Music and dance are a big part of the island's ", "i______y", ". They show the island's history, culture, and way of life.", ["identity"]],
+        ["India achieved ", "i__________e", " from the United Kingdom on August 15, 1947.", ["independence"]],
+        ["Several passengers were found to have the disease after they took the same flight as ", "a_ i______d", " person.", ["an infected"]],
+        ["More than half of the ", "i___s", " in the clothing store were on sale for one day only.", ["items"]],
+        ["The owl has such ", "a k__n", " sense of hearing that it can hunt animals in the dark.", ["a keen"]],
+        ["The Tokyo Tower and the Tokyo Skytree are two of Japan's most famous ", "l_______s", ".", ["landmarks"]],
+        ["The party last night was very ", "l____y", ". Lots of people were dancing and laughing.", ["lively"]],
+        ["These days, most taxi drivers use GPS to ", "l_____e", " places they don't know how to drive to.", ["locate"]],
+        ["Kyle ", "m_____d", " to lose twenty pounds by exercising every day and eating less junk food.", ["managed"]],
+        ["Joey wasn't sure that he could handle living abroad, but he ", "m_____d", " quite well.", ["managed"]],
+        ["David kept the old watch because it was ", "a m________l", " gift from his grandfather.", ["a meaningful"]],
+        ["The Taiwan Salt Museum and Qigu Salt Mountain in Tainan are ", "m________s", " to Taiwan's salt producing past.", ["monuments"]],
+        ["This is a rich ", "n__________d", ". You can tell by all the big houses and fancy cars.", ["neighborhood"]],
+        ["Taiwanese people ", "o_____e", " many holidays throughout the year, such as Mid-Autumn Festival and Dragon Boat Festival.", ["observe"]],
+        ["The little girl is wearing yellow shoes, a yellow dress, and has painted her nails yellow. ", "O_____y", ", she likes this color.", ["Obviously"]],
+        ["Lily loves to go fishing ", "o_ h__ o__", ", so she can listen to the sound of the sea.", ["on her own"]],
+        ["Our class trip was very ", "o_______d", "; we knew exactly where to go and what to do.", ["organized"]],
+        ["Janice found the math class really tough at first, but it became easier ", "o___ t___e", ".", ["over time"]],
+        ["After Mr. Huang got fired, he sadly ", "p____d", " all of his things ", "u_", " and left.", ["packed", "up"]],
+        ["Tracy decided to ", "p__ a v____ t_", " Big Ben while she was on a business trip in London.", ["pay a visit to"]],
+        ["David ", "p_____d", " the apple before he cut it into small pieces to make an apple pie.", ["peeled"]],
+        ["After Mrs. Checknita fell ill, her family hired someone to help her ", "p_____m", " daily tasks.", ["perform"]],
+        ["You should never put hot drinking water into ", "p_____c", " bottles or cups.", ["plastic"]],
+        ["Chocolate is delicious for most people, but did you know that it can be ", "p_______s", " to dogs?", ["poisonous"]],
+        ["The fishing boat left the ", "p__t", " early in the morning and came back full of fish.", ["port"]],
+        ["When Noah lost his job, he started thinking about new job ", "p___________s", " at local companies.", ["possibilities"]],
+        ["The weatherperson ", "p_______d", " that it would start raining around 6:00 p.m., and she was correct.", ["predicted"]],
+        ["This shop sells a variety of health and food ", "p______s", " for babies.", ["products"]],
+        ["Marc didn't complete the assignment ", "p______y", ", so the teacher asked him to do it again.", ["properly"]],
+        ["After the party, Nick took all the empty bottles out for ", "r_______g", ".", ["recycling"]],
+        ["Jasmine chewed gum to ", "r____e", " the smell of garlic from her breath.", ["remove"]],
+        ["To keep her shoes clean, Ellie used a small brush to ", "r____e", " sand from them.", ["remove"]],
+        ["Sometimes Chinese speakers type \"3Q\" to ", "r_______t", " the words \"thank you\" because \"3Q\" sounds like \"thank you\" in Chinese.", ["represent"]],
+        ["The police ", "r_______d", " to the 110 call by sending officers to the scene of the car accident.", ["responded"]],
+        ["Janice was given ", "a r____d", " of $2,000 for informing the police of the address of the man they were searching for.", ["a reward"]],
+        ["Larry feels satisfied when he helps strangers, even if there is no ", "r____d", ".", ["reward"]],
+        ["The actors spent weeks practicing a complex fighting ", "r_____e", " for one scene in the play.", ["routine"]],
+        ["Kelly is very ", "s_______e", " to flavors. She can taste any food or drink and name it without seeing it.", ["sensitive"]],
+        ["This book is about a girl who was sold into ", "s_____y", " and made to work on a farm for years.", ["slavery"]],
+        ["There wasn't any ", "s______c", " reason why Jason didn't attend the performance with his friends. He just didn't feel like it.", ["specific"]],
+        ["Ben watched a baseball game at the ", "s_____m", " with his friends yesterday.", ["stadium"]],
+        ["The island of Hainan in China has a 108-meter ", "s____e", " of the goddess Kuanyin.", ["statue"]],
+        ["The river has provided ", "a s____y", " flow of fresh water to the people in this village for 130 years.", ["a steady"]],
+        ["The police found a chemical ", "s_______e", " at the murder scene and are doing tests on it right now.", ["substance"]],
+        ["After Luca ate something bad at a restaurant, he threw up several times and ", "s______d", " all night.", ["suffered"]],
+        ["The house is ", "s________d", " by tall trees, so nobody can see it from the road.", ["surrounded"]],
+        ["In Beauty and the Beast, the dying rose ", "s________s", " the Beast's chance of becoming human again.", ["symbolizes"]],
+        ["Mary and John went into the ", "t_____t", " center to ask for information about local hotels.", ["tourist"]],
+        ["The prison was closed after many reports revealed the poor ", "t_______t", " of prisoners there.", ["treatment"]],
+        ["Before you blow the ", "t_____t", ", check your finger positions to get the right notes.", ["trumpet"]],
+        ["All the members of the band were worried about their performance, but it ", "t____d o__", " to be amazing!", ["turned out"]],
+        ["Several players cheated during the game, so everybody agrees that the final score is ", "u_____r", ".", ["unfair"]],
+        ["The city is famous for its ", "u____e", " culture, which combines modern lifestyles with ancient traditions.", ["unique"]],
+        ["Taipei has ", "a v_____y", " of different restaurants—Japanese, Thai, Indian, and more.", ["a variety"]],
+        ["We mainly get ", "v_____n", " D from the sun through our skin, but it is also often added to milk.", ["vitamin"]],
+        ["Natalie carefully ", "w_____d", " the gift so no one could see what was inside.", ["wrapped"]]
     ];
     var count = -1;
     var tick = 0;
-    var rate = 461.538461538;
+    var speed = 1846.15384615;
     var run;
     var eng;
     var colors = ['#f77', '#f97', '#ff7', '#7f7', '#7ff', '#97f', '#f7f'];
     var info = document.getElementById('info');
     var index = document.getElementById('index');
     var audio = document.getElementById('audio');
-    var track = 0;
-    var btn = document.getElementById('start');
-    document.getElementById('speed').addEventListener('input', e => {
-        rate = e.target.value - 0;
-        info.style.setProperty('--beat-dur', rate + 'ms');
-    })
-
-    function task() {
-        info.innerHTML = '';
-        info.innerHTML += '<span style="color: ' + colors[count % colors.length] + ';">' + eng.slice(0, tick + 1) + '</span>';
-        info.innerHTML += eng.slice(tick + 1);
-        info.innerHTML += '<br>';
-        info.innerHTML += '<span style="color: ' + colors[count % colors.length] + ';">' + dictionary[count].split('|')[1] + '</span>';
-        index.innerText = count + ' - ' + tick;
-        tick++;
-        if (tick < eng.length) setTimeout(task, rate / eng.length - 1);
-    }
-
-    function step() {
-        info.classList.remove('kick');
-        void info.offsetWidth;
-        info.classList.add('kick');
-        count++;
-        if (count === dictionary.length) count = 0;
-        eng = dictionary[count].split('|')[0];
-        tick = 0;
-        task();
-    }
-
     var now;
+    var btn = document.getElementById('start');
+
+    function colorText(color, text, index, _) {
+        return (
+                `<span style="color: ${colors[count % colors.length]};">${text.slice(0, Math.ceil(index * text.length))}</span>` +
+                `<span${_ ? ` style="text-shadow: 0 0 10px ${color};"` : ''}>${text.slice(Math.ceil(index * text.length))}</span>`
+        );
+    }
+
+    const f1 = (t) => ((8 * t * Math.PI) - Math.sin(8 * t * Math.PI)) / (6 * Math.PI);
+    const f2 = (t) => 1 / (1 + 20 * (t % 0.25));
 
     function loop() {
-        if (performance.now() - now > rate) {
-            now += rate;
-            step();
+        tick = (performance.now() - now) / speed;
+        if (tick >= 1) {
+            now += speed;
+            tick--;
+            count++;
+            if (count === quastions.length) count = 0;
+        }
+        index.innerText = (count + 1) + ' / ' + quastions.length;
+        info.style.scale = f2(tick) * 0.01 + 0.99;
+        if (count > -1) {
+            if (tick <= 0.75) {
+                let str = '';
+                let clr = colors[count % colors.length];
+                for (let i = 0; i < quastions[count].length - 1; i++) str += quastions[count][i];
+                info.innerHTML = colorText(clr, str, f1(tick));
+            } else {
+                let str = '';
+                let clr = colors[count % colors.length];
+                let d = 0;
+                info.innerHTML = '';
+                for (let i = 0; i < quastions[count].length - 1; i++) {
+                    if (i & 1) {
+                        info.innerHTML += colorText(clr, quastions[count].at(-1)[d++], 0, true);
+                    } else {
+                        info.innerHTML += colorText(clr, quastions[count][i], 1);
+                    }
+                }
+            }
         }
         requestAnimationFrame(loop);
     }
 
     btn.addEventListener('click', e => {
-        now = performance.now() + 700;
-        setTimeout(loop, 700);
+        now = performance.now() - 700;
+        loop();
         audio.play();
         btn.remove();
     });
-
-
 
     audio.addEventListener('ended', e => {
         audio.src = './track' + (track = ++track % 9) + '.mp3';
